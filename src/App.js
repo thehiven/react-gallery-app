@@ -4,6 +4,7 @@ import config from './config';
 import axios from 'axios';
 
 import Header from './components/Header';
+import SearchForm from './components/SearchForm';
 import PhotoContainer from './components/PhotoContainer';
 import NotFound from './components/NotFound';
 
@@ -73,14 +74,16 @@ class App extends Component {
     return (
       <BrowserRouter>
         <div className="container">
-          <Route exact path="/" render={() => <Redirect to="/cats" /> }/>
-          {/* Render 'Header' component on all routes and pass 'props' object from Router to it. */}
-          <Route path="/" render={props => <Header {...props} startLoading={this.startLoading} /> } />
-
+          <Route exact path="/" render={() => <Redirect to="/search/cats" /> }/>
+          {/* Render 'Header' component on all routes with results and pass 'props' object from Router to it. */}
+          <Route exact path="/search/:query" render={props => <Header {...props} startLoading={this.startLoading} /> } />
+          
           <Switch>
-            <Route exact path="/:query" render={props => this.getPhotoContainer(props)} />
+            <Route exact path="/search" render={props => <SearchForm history={props.history} startLoading={this.startLoading} />} />
+            <Route exact path="/search/:query" render={props => this.getPhotoContainer(props)} />
             <Route component={NotFound} />
           </Switch>
+          
         </div>
       </BrowserRouter>
     );
