@@ -6,7 +6,7 @@ const Header = (props) => {
   return (
     <header>
       <SearchForm history={props.history} startLoading={props.startLoading} />
-      <Nav />
+      <Nav startLoading={props.startLoading} />
     </header>
   );
 };

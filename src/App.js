@@ -8,7 +8,6 @@ import PhotoContainer from './components/PhotoContainer';
 import NotFound from './components/NotFound';
 
 class App extends Component {
-
   constructor(props) {
     super(props);
 
@@ -19,16 +18,21 @@ class App extends Component {
     };
 
     this.handleSearch = this.handleSearch.bind(this);
-    this.setLoading = this.startLoading.bind(this);
+    this.startLoading = this.startLoading.bind(this);
   }
 
-  handleSearch(query, saveTo = 'photos') {
+  /**
+   * Fetches 24 photos from flickr API by using provided query.
+   * @param {string} query Query string used as tag to match and fetch photos.
+   */
+  handleSearch(query) {
     axios.get(`https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${config.apiKey}&tags=${query}&per_page=24&format=json&nojsoncallback=1`)
       .then(response => {
         this.setState(
           {
             isLoading: false,
-            [saveTo]: response.data.photos.photo
+            nothingFound: false,
+            photos: response.data.photos.photo
           }
         );
       })
@@ -43,16 +47,25 @@ class App extends Component {
       });
   }
 
-  startLoading() {
+  /**
+   * Calls 'handleSearch' function on App component and sets that component state to indicate loading of photos.
+   * @param {string} query Query string used as tag to match and fetch photos.
+   */
+  startLoading(query) {
+    this.handleSearch(query);
     this.setState({isLoading: true});
   }
 
-  getPhotoContainer(props, property = 'photos') {
+  /**
+   * Sets necessary props on 'PhotoContainer' and returns it.
+   * @param {object} props Props object passed from Router. 
+   */
+  getPhotoContainer(props) {
     return <PhotoContainer {...props} 
       isLoading={this.state.isLoading} 
       nothingFound={this.state.nothingFound} 
-      data={this.state[property]} 
-      handleSearch={this.handleSearch} 
+      data={this.state.photos} 
+      startLoading={this.startLoading}
     />;
   }
 
@@ -60,8 +73,10 @@ class App extends Component {
     return (
       <BrowserRouter>
         <div className="container">
-          <Route exact path="/" render={() => <Redirect to="/cats" />} />
+          <Route exact path="/" render={() => <Redirect to="/cats" /> }/>
+          {/* Render 'Header' component on all routes and pass 'props' object from Router to it. */}
           <Route path="/" render={props => <Header {...props} startLoading={this.startLoading} /> } />
+
           <Switch>
             <Route exact path="/:query" render={props => this.getPhotoContainer(props)} />
             <Route component={NotFound} />

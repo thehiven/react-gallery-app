@@ -1,5 +1,5 @@
 import React from 'react';
-import Indicator from '../loading.svg';
+import Indicator from '../images/loading.svg';
 
 const Loading = () => {
   return (

@@ -12,13 +12,23 @@ class SearchForm extends Component {
     this.handleInputChange = this.handleInputChange.bind(this);
   }
 
+  /**
+   * Prevents default behaviour of the form.
+   * Calls 'startLoading' function on the App component.
+   * Pushes a new entry onto the history stack to programmatically load it.
+   * @param {objectr} e Event object
+   */
   handleFormSubmit(e) {
     e.preventDefault();
-    this.props.startLoading();
+    this.props.startLoading(this.state.query);
     this.props.history.push(`/${this.state.query}`);
     e.currentTarget.reset();
   }
 
+  /**
+   * Sets query property of the state object to be equal to the input's value.
+   * @param {object} e Event object
+   */
   handleInputChange(e) {
     this.setState({query: e.target.value});
   }
@@ -26,6 +36,7 @@ class SearchForm extends Component {
   render() {
     return (
       <form className="search-form" onSubmit={this.handleFormSubmit}>
+        {/* control the value with this component's state */}
         <input onChange={this.handleInputChange} value={this.state.query} type="serach" name="search" placeholder="Search..." required />
         <button type="submit" className="search-button">
           <svg fill="#fff" height="24" viewBox="0 0 23 23" width="24" xmlns="http://www.w3.org/2000/svg">
